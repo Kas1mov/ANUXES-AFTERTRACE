@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.11.12328.437 stable
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aftertrace.App", "Aftertrace.App\Aftertrace.App.csproj", "{6A4526D8-8A84-4EC8-A73C-4CB1D54D57E9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A4526D8-8A84-4EC8-A73C-4CB1D54D57E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A4526D8-8A84-4EC8-A73C-4CB1D54D57E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A4526D8-8A84-4EC8-A73C-4CB1D54D57E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A4526D8-8A84-4EC8-A73C-4CB1D54D57E9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AA9E22BF-2554-48F6-ADF8-2A9631FC4D41}
+	EndGlobalSection
+EndGlobal
