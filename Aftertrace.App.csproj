@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ApplicationIcon>Assets\anuxes-logo.ico</ApplicationIcon>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>ANUXES.AFTERTRACE</AssemblyName>
+    <RootNamespace>ANUXES.Aftertrace</RootNamespace>
+    <Version>0.1.1</Version>
+    <Authors>Kas1mov</Authors>
+    <Product>ANUXES AFTERTRACE</Product>
+    <Description>File inspection and change-analysis assistant.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <Resource Include="Assets\anuxes-logo.png" />
+  </ItemGroup>
+</Project>

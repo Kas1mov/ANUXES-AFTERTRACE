@@ -1,0 +1,291 @@
+<Window x:Class="ANUXES.Aftertrace.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ANUXES AFTERTRACE" Width="1240" Height="820" MinWidth="1030" MinHeight="700"
+        WindowStyle="None" ResizeMode="CanResize" AllowsTransparency="True"
+        WindowStartupLocation="CenterScreen" Background="Transparent"
+        Foreground="#F3EEFF" AllowDrop="False" SnapsToDevicePixels="True">
+    <Grid>
+        <!-- Shadow is a separate background-only visual so it never blurs the app content. -->
+        <Border x:Name="WindowShadow" Margin="8" Background="#111013" CornerRadius="14"
+                IsHitTestVisible="False">
+            <Border.Effect>
+                <DropShadowEffect Color="#8B5CF6" BlurRadius="22" ShadowDepth="0" Opacity="0.20" />
+            </Border.Effect>
+        </Border>
+        <Border x:Name="WindowFrame" Margin="8" BorderBrush="#67428B" BorderThickness="1"
+                Background="#111013" CornerRadius="14" SnapsToDevicePixels="True">
+            <Grid x:Name="WindowRoot" ClipToBounds="True" SizeChanged="WindowRoot_SizeChanged">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="42" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Custom title bar -->
+            <Border Grid.Row="0" Background="#111015" BorderBrush="#31263B" BorderThickness="0,0,0,1"
+                    MouseLeftButtonDown="TitleBar_MouseLeftButtonDown" Margin="10,6,4,0">
+                <Grid Margin="15,0,8,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="Assets/anuxes-logo.png" Width="25" Height="25" Stretch="Uniform" />
+                        <TextBlock Text="ANUXES" Margin="9,0,0,0" VerticalAlignment="Center" FontSize="12"
+                                   FontWeight="Bold" Foreground="#E9D5FF">
+                            <TextBlock.Effect><DropShadowEffect Color="#8B5CF6" BlurRadius="10" ShadowDepth="0" Opacity="0.4" /></TextBlock.Effect>
+                        </TextBlock>
+                        <TextBlock Text=" / AFTERTRACE" Margin="5,0,0,0" VerticalAlignment="Center"
+                                   FontSize="11" FontWeight="Bold" Foreground="#C084FC">
+                            <TextBlock.Effect><DropShadowEffect Color="#A855F7" BlurRadius="15" ShadowDepth="0" Opacity="0.9" /></TextBlock.Effect>
+                        </TextBlock>
+                        <Border Margin="10,0,0,0" VerticalAlignment="Center" Background="#1B1424"
+                                BorderBrush="#624187" BorderThickness="1" CornerRadius="5" Padding="6,2">
+                            <Border.Effect><DropShadowEffect Color="#A855F7" BlurRadius="9" ShadowDepth="0" Opacity="0.28" /></Border.Effect>
+                            <TextBlock Text="v0.1.1" FontSize="9" FontWeight="SemiBold" Foreground="#C9A7F5" />
+                        </Border>
+                    </StackPanel>
+                    <TextBlock Grid.Column="1" Text="FILE INTELLIGENCE CONSOLE" HorizontalAlignment="Center"
+                               VerticalAlignment="Center" FontSize="9" FontWeight="SemiBold"
+                               Foreground="#77749D" />
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,13,0">
+                            <TextBlock Text="ANUXES DIVISION" VerticalAlignment="Center" FontSize="8"
+                                       FontWeight="SemiBold" Foreground="#8D829F" />
+                            <TextBlock Text="  •  " VerticalAlignment="Center" FontSize="8" Foreground="#675A78" />
+                            <TextBlock Text="Kas1mov" VerticalAlignment="Center" FontSize="8"
+                                       FontWeight="SemiBold" Foreground="#C49BFF">
+                                <TextBlock.Effect><DropShadowEffect Color="#A855F7" BlurRadius="9" ShadowDepth="0" Opacity="0.48" /></TextBlock.Effect>
+                            </TextBlock>
+                        </StackPanel>
+                        <Button Content="—" Width="35" Height="29" Click="Minimize_Click" Style="{StaticResource WindowControlButton}" FontSize="15" />
+                        <Button x:Name="MaximizeButton" Content="□" Width="35" Height="29" Click="Maximize_Click"
+                                Style="{StaticResource WindowControlButton}" FontSize="12" />
+                        <Button Content="×" Width="35" Height="29" Click="Close_Click" Style="{StaticResource WindowControlButton}" FontSize="18" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="228" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Sidebar -->
+                <Border Grid.Column="0" Background="#151219" BorderBrush="#30243A" BorderThickness="0,0,1,0" Margin="4,0,0,4">
+                    <Grid Margin="17,20,17,18">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="24" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <StackPanel>
+                            <Border Width="76" Height="76" CornerRadius="19" HorizontalAlignment="Left"
+                                    Background="#00000f" BorderBrush="#7441A1" BorderThickness="1">
+                                <Border.Effect><DropShadowEffect Color="#8B5CF6" BlurRadius="26" ShadowDepth="0" Opacity="0.45" /></Border.Effect>
+                                <Image Source="Assets/anuxes-logo.png" Margin="7" Stretch="Uniform" />
+                            </Border>
+                            <TextBlock Text="AFTERTRACE" Margin="0,16,0,0" FontSize="17" FontWeight="Bold" Foreground="#D8B4FE">
+                                <TextBlock.Effect><DropShadowEffect Color="#A855F7" BlurRadius="20" ShadowDepth="0" Opacity="0.82" /></TextBlock.Effect>
+                            </TextBlock>
+                            <TextBlock Text="FILE ANALYSIS ASSISTANT" Margin="0,4,0,0" FontSize="8" FontWeight="SemiBold"
+                                       Foreground="#9D79D0" />
+                            <Border Height="1" Background="#30243B" Margin="0,20,0,0" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="2">
+                            <TextBlock Text="WORKSPACE" FontSize="9" FontWeight="Bold" Foreground="#68688D" Margin="7,0,0,10" />
+                            <Button Style="{StaticResource SidebarButton}" Background="#21172B" Foreground="#E6D4FF">
+                                <StackPanel Orientation="Horizontal"><TextBlock Text="◈" FontSize="17" Foreground="#C084FC" Width="27" /><TextBlock Text="Overview" VerticalAlignment="Center" /></StackPanel>
+                            </Button>
+                            <Button Style="{StaticResource SidebarButton}" Click="SelectFile_Click">
+                                <StackPanel Orientation="Horizontal"><TextBlock Text="⌕" FontSize="20" Foreground="#A78BFA" Width="27" /><TextBlock Text="File scanner" VerticalAlignment="Center" /></StackPanel>
+                            </Button>
+                            <Button Style="{StaticResource SidebarButton}" IsEnabled="False">
+                                <StackPanel Orientation="Horizontal"><TextBlock Text="◷" FontSize="18" Foreground="#8D80B8" Width="27" /><TextBlock Text="Change tracking" VerticalAlignment="Center" /></StackPanel>
+                            </Button>
+                            <Button Style="{StaticResource SidebarButton}" IsEnabled="False">
+                                <StackPanel Orientation="Horizontal"><TextBlock Text="▤" FontSize="17" Foreground="#8D80B8" Width="27" /><TextBlock Text="Reports" VerticalAlignment="Center" /></StackPanel>
+                            </Button>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="4">
+                            <Border Background="#18141D" BorderBrush="#392B47" BorderThickness="1" CornerRadius="10" Padding="11">
+                                <StackPanel>
+                                    <TextBlock Text="ANALYSIS MODE" FontSize="9" FontWeight="Bold" Foreground="#A78BFA" />
+                                    <TextBlock Text="Static inspection" Margin="0,6,0,0" FontSize="11" Foreground="#E2D9F4" />
+                                    <TextBlock Text="Files are never executed." Margin="0,4,0,0" FontSize="9" Foreground="#777A9E" />
+                                        <TextBlock FontSize="8" Foreground="#68688D" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border Height="1" Background="#30243B" Margin="0,13,0,11" />
+                            <StackPanel>
+                                <TextBlock Text="ABOUT" FontSize="9" FontWeight="Bold" Foreground="#77708E" Margin="0,0,0,8" />
+                                <TextBlock Text="ANUXES AFTERTRACE" FontSize="10" FontWeight="SemiBold" Foreground="#D8C9EC" />
+                                <TextBlock Text="File analysis assistant" Margin="0,3,0,0" FontSize="9" Foreground="#85809A" />
+                                <TextBlock Text="Published by ANUXES DIVISION" Margin="0,11,0,0" FontSize="8" Foreground="#9A8EAD" />
+                                <TextBlock Text="Developed by Kas1mov" Margin="0,3,0,0" FontSize="8" Foreground="#B98BFF">
+                                    <TextBlock.Effect><DropShadowEffect Color="#A855F7" BlurRadius="8" ShadowDepth="0" Opacity="0.4" /></TextBlock.Effect>
+                                </TextBlock>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Main workspace -->
+                <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,4,4">
+                    <StackPanel Margin="30,25,30,28">
+                        <Grid Margin="0,0,0,19">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="GOOD EVENING, ANALYST" FontSize="9" FontWeight="Bold" Foreground="#9B77CC" />
+                                <TextBlock Text="Inspect. Compare. Understand." Margin="0,7,0,0" FontSize="25" FontWeight="Bold"
+                                           Foreground="#F4ECFF">
+                                    <TextBlock.Effect><DropShadowEffect Color="#A855F7" BlurRadius="24" ShadowDepth="0" Opacity="0.72" /></TextBlock.Effect>
+                                </TextBlock>
+                                <TextBlock Text="A lightweight assistant for file inspection and change analysis." Margin="0,6,0,0"
+                                           FontSize="11" Foreground="#898BAE" />
+                            </StackPanel>
+                            <Border Grid.Column="1" VerticalAlignment="Top" Background="#1A1621" BorderBrush="#70458D"
+                                    BorderThickness="1" CornerRadius="20" Padding="12,7">
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse Width="6" Height="6" Fill="#A78BFA" Margin="0,0,7,0">
+                                        <Ellipse.Effect><DropShadowEffect Color="#A855F7" BlurRadius="10" ShadowDepth="0" Opacity="1" /></Ellipse.Effect>
+                                    </Ellipse>
+                                    <TextBlock Text="LOCAL ANALYSIS" FontSize="9" FontWeight="Bold" Foreground="#D8B4FE" />
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <!-- Overview cards -->
+                        <Grid Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="12" /><ColumnDefinition Width="*" /><ColumnDefinition Width="12" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Background="#18151E" BorderBrush="#382A46" BorderThickness="1" CornerRadius="11" Padding="16">
+                                <StackPanel>
+                                    <TextBlock Text="FILES ANALYZED" FontSize="9" FontWeight="Bold" Foreground="#8585A9" />
+                                    <TextBlock x:Name="FilesAnalyzedText" Text="0" Margin="0,8,0,0" FontSize="25" FontWeight="Bold" Foreground="#EDE4FF" />
+                                    <TextBlock Text="this session" Margin="0,2,0,0" FontSize="9" Foreground="#737694" />
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="2" Background="#18151E" BorderBrush="#59406E" BorderThickness="1" CornerRadius="11" Padding="16">
+                                <StackPanel>
+                                    <TextBlock Text="NEEDS REVIEW" FontSize="9" FontWeight="Bold" Foreground="#B99ADC" />
+                                    <TextBlock x:Name="FlaggedCountText" Text="0" Margin="0,8,0,0" FontSize="25" FontWeight="Bold" Foreground="#D8B4FE">
+                                        <TextBlock.Effect><DropShadowEffect Color="#A855F7" BlurRadius="14" ShadowDepth="0" Opacity="0.55" /></TextBlock.Effect>
+                                    </TextBlock>
+                                    <TextBlock Text="review indicators" Margin="0,2,0,0" FontSize="9" Foreground="#737694" />
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="4" Background="#18151E" BorderBrush="#382A46" BorderThickness="1" CornerRadius="11" Padding="16">
+                                <StackPanel>
+                                    <TextBlock Text="LAST INSPECTION" FontSize="9" FontWeight="Bold" Foreground="#8585A9" />
+                                    <TextBlock x:Name="LastScanText" Text="—" Margin="0,8,0,0" FontSize="18" FontWeight="Bold" Foreground="#EDE4FF" />
+                                    <TextBlock Text="local session" Margin="0,2,0,0" FontSize="9" Foreground="#737694" />
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <!-- Scanner card -->
+                        <Border Background="#17141D" BorderBrush="#604078" BorderThickness="1" CornerRadius="13" Padding="20" Margin="0,0,0,17">
+                            <Border.Effect><DropShadowEffect Color="#6D28D9" BlurRadius="22" ShadowDepth="0" Opacity="0.16" /></Border.Effect>
+                            <StackPanel>
+                                <Grid Margin="0,0,0,14">
+                                    <StackPanel>
+                                        <TextBlock Text="01 / FILE SCANNER" FontSize="9" FontWeight="Bold" Foreground="#B58AE8" />
+                                        <TextBlock Text="Choose a file to inspect" Margin="0,6,0,0" FontSize="17" FontWeight="SemiBold" Foreground="#F0E8FF" />
+                                    </StackPanel>
+                                    <TextBlock Text="SHA-256  ·  SIGNATURE  ·  FILE HEADER" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                               FontSize="8" Foreground="#77799D" />
+                                </Grid>
+                                <Border x:Name="DropArea" AllowDrop="True" DragOver="DropArea_DragOver" Drop="DropArea_Drop"
+                                        Background="#121017" BorderBrush="#79509A" BorderThickness="1" CornerRadius="10" Padding="19">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                        <Border Width="43" Height="43" CornerRadius="10" Background="#291B36" BorderBrush="#8351A9" BorderThickness="1">
+                                            <TextBlock Text="⇧" FontSize="24" Foreground="#D8B4FE" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock.Effect><DropShadowEffect Color="#A855F7" BlurRadius="12" ShadowDepth="0" Opacity="0.7" /></TextBlock.Effect>
+                                            </TextBlock>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" Margin="14,0,12,0" VerticalAlignment="Center">
+                                            <TextBlock Text="Drop a file here or browse your computer" FontSize="12" FontWeight="SemiBold" Foreground="#E8DEFA" />
+                                            <TextBlock x:Name="SelectedFileText" Text="No file selected" Margin="0,5,0,0" FontSize="10" Foreground="#8587A9" TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
+                                        <Button Grid.Column="2" Content="CHOOSE FILE" Style="{StaticResource QuietButton}" Click="SelectFile_Click" VerticalAlignment="Center" />
+                                    </Grid>
+                                </Border>
+                                <Grid Margin="0,14,0,0">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="10" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="ScannerStatusText" Text="READY · Files are inspected locally and never executed." VerticalAlignment="Center" FontSize="9" Foreground="#8587A9" />
+                                    <Button x:Name="ExportReportButton" Grid.Column="1" Content="EXPORT REPORT" Style="{StaticResource QuietButton}" IsEnabled="False" Click="ExportReport_Click" />
+                                    <Button x:Name="ScanButton" Grid.Column="3" Content="ANALYZE FILE  →" Style="{StaticResource GlowButton}" IsEnabled="False" Click="ScanButton_Click" MinWidth="145" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Results -->
+                        <Border Background="#16131B" BorderBrush="#3A2A49" BorderThickness="1" CornerRadius="13" Padding="20">
+                            <StackPanel>
+                                <Grid Margin="0,0,0,14">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="02 / INSPECTION RESULTS" FontSize="9" FontWeight="Bold" Foreground="#B58AE8" />
+                                        <TextBlock Text="File intelligence" Margin="0,6,0,0" FontSize="17" FontWeight="SemiBold" Foreground="#F0E8FF" />
+                                    </StackPanel>
+                                    <Border x:Name="AssessmentBadge" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                            Background="#151A36" BorderBrush="#45406A" BorderThickness="1" CornerRadius="20" Padding="11,6">
+                                        <TextBlock x:Name="AssessmentText" Text="AWAITING FILE" FontSize="8" FontWeight="Bold" Foreground="#A6A1C2" />
+                                    </Border>
+                                </Grid>
+                                <Grid>
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="1.15*" /><ColumnDefinition Width="15" /><ColumnDefinition Width="0.85*" /></Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="FILE DETAILS" FontSize="8" FontWeight="Bold" Foreground="#727596" Margin="0,0,0,9" />
+                                        <TextBlock Text="Detected type" FontSize="9" Foreground="#777A9E" />
+                                        <TextBlock x:Name="ResultTypeText" Text="—" Margin="0,3,0,10" FontSize="11" Foreground="#E4DAF5" />
+                                        <TextBlock Text="File size" FontSize="9" Foreground="#777A9E" />
+                                        <TextBlock x:Name="ResultSizeText" Text="—" Margin="0,3,0,10" FontSize="11" Foreground="#E4DAF5" />
+                                        <TextBlock Text="Digital signature" FontSize="9" Foreground="#777A9E" />
+                                        <TextBlock x:Name="ResultSignatureText" Text="—" Margin="0,3,0,10" FontSize="10" Foreground="#C9BBDD" TextWrapping="Wrap" />
+                                        <TextBlock Text="SHA-256" FontSize="9" Foreground="#777A9E" />
+                                        <TextBox x:Name="ResultHashText" Text="—" Margin="0,4,0,0" IsReadOnly="True" TextWrapping="Wrap" FontFamily="Consolas" FontSize="9"
+                                                 Background="#100E15" Foreground="#CDB4F5" BorderBrush="#493356" BorderThickness="1" Padding="8" />
+                                    </StackPanel>
+                                    <Border Grid.Column="2" Background="#15121A" BorderBrush="#33263F" BorderThickness="1" CornerRadius="9" Padding="13">
+                                        <StackPanel>
+                                            <TextBlock Text="FINDINGS" FontSize="8" FontWeight="Bold" Foreground="#8580A5" Margin="0,0,0,8" />
+                                            <TextBlock x:Name="EmptyFindingsText" Text="Run an inspection to see detected indicators and explanations." FontSize="10" Foreground="#777A9E" TextWrapping="Wrap" />
+                                            <ItemsControl x:Name="FindingsList">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border Background="#211A29" BorderBrush="#2A2850" BorderThickness="1" CornerRadius="7" Padding="9" Margin="0,0,0,7">
+                                                            <StackPanel>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <TextBlock Text="{Binding Marker}" Foreground="#C084FC" FontWeight="Bold" Margin="0,0,7,0" />
+                                                                    <TextBlock Text="{Binding Title}" Foreground="#E9DFFF" FontSize="10" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                                                </StackPanel>
+                                                                <TextBlock Text="{Binding Description}" Margin="0,5,0,0" Foreground="#9798B6" FontSize="9" TextWrapping="Wrap" />
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Text="ANUXES AFTERTRACE  /  STATIC INSPECTION ONLY  /  NOT AN ANTIVIRUS" Margin="2,17,0,0"
+                                   HorizontalAlignment="Center" FontSize="8" Foreground="#565A7C" />
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
