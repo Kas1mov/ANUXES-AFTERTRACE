@@ -1,6 +1,23 @@
+<div align="center">
+
 # ANUXES AFTERTRACE
 
-**Inspect. Compare. Understand.** — «Исследуй. Сравнивай. Понимай».
+### A lightweight file inspection assistant for Windows
+
+**Inspect. Compare. Understand.**
+
+![Version](https://img.shields.io/badge/version-0.1.1-9B75FF?style=for-the-badge)
+![Platform](https://img.shields.io/badge/platform-Windows-263A63?style=for-the-badge&logo=windows)
+![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge&logo=dotnet)
+![UI](https://img.shields.io/badge/UI-WPF-17151F?style=for-the-badge)
+
+**Publisher:** ANUXES DIVISION · **Developer:** Kas1mov
+
+<img width="1231" height="809" alt="ANUXES AFTERTRACE interface" src="https://github.com/user-attachments/assets/ee3ccbc7-9ae9-41a0-9f36-45f13c4ab1d2" />
+
+</div>
+
+---
 
 ANUXES AFTERTRACE — Windows-приложение для локального статического анализа файлов. Оно помогает изучать свойства файлов, вычислять SHA-256, определять поддерживаемые форматы по сигнатурам и просматривать найденные эвристические признаки.
 
