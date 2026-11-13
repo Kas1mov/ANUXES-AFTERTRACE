@@ -8,7 +8,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>ANUXES.AFTERTRACE</AssemblyName>
     <RootNamespace>ANUXES.Aftertrace</RootNamespace>
-    <Version>0.1.1</Version>
+    <Version>0.2.0</Version>
     <Authors>Kas1mov</Authors>
     <Product>ANUXES AFTERTRACE</Product>
     <Description>File inspection and change-analysis assistant.</Description>

@@ -1,139 +1,100 @@
-<div align="center">
-
 # ANUXES AFTERTRACE
 
-### A lightweight file inspection assistant for Windows
+**Configured project version:** 0.2.0
+**Developer:** Kas1mov
+**Publisher / brand:** ANUXES DIVISION
+**Platform:** Windows 10/11, .NET 8, WPF
 
-**Inspect. Compare. Understand.**
+ANUXES AFTERTRACE is a lightweight local file-inspection assistant. It gathers file metadata, calculates hashes, and records folder snapshots to help investigate changes over time. It is **not an antivirus** and does not claim to determine whether a file is safe or malicious.
 
-![Version](https://img.shields.io/badge/version-0.1.1-9B75FF?style=for-the-badge)
-![Platform](https://img.shields.io/badge/platform-Windows-263A63?style=for-the-badge&logo=windows)
-![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge&logo=dotnet)
-![UI](https://img.shields.io/badge/UI-WPF-17151F?style=for-the-badge)
+## Current features
 
-**Publisher:** ANUXES DIVISION · **Developer:** Kas1mov
+### File scanner
 
-<img width="1231" height="809" alt="ANUXES AFTERTRACE interface" src="https://github.com/user-attachments/assets/ee3ccbc7-9ae9-41a0-9f36-45f13c4ab1d2" />
+- Select a file through the picker or drag and drop it into the scanner.
+- Calculate a SHA-256 hash using a streamed read.
+- Detect supported file formats from their headers (including PE, PDF, PNG, JPEG, GIF, ZIP, 7-Zip, RAR and ELF).
+- Compare the selected extension with the detected format where supported.
+- Highlight executable files with document-like double extensions.
+- Read available information about an embedded signing certificate. This does **not** validate the certificate trust chain.
+- Display findings with explanations and export the result as JSON.
 
-</div>
+### Snapshot Engine — M1
 
----
+- Select a folder or drive and create a point-in-time snapshot.
+- Record each readable file's relative path, size, last-write timestamp, attributes and SHA-256 hash.
+- Save snapshots as JSON in `%LOCALAPPDATA%\ANUXES\AFTERTRACE\Snapshots`.
+- View the local snapshot history and load a saved snapshot back into the application.
+- Show scan progress, captured-file count, total size and skipped-item count; cancel an in-progress scan.
+- Skip symbolic links and junctions rather than following paths outside the selected tree.
+- Record inaccessible or changing items as snapshot issues instead of silently treating them as captured.
 
-## Overview
+Snapshots are inventories, not backups: AFTERTRACE does not copy the source files. Source files are read only; they are never executed, edited, moved, deleted or quarantined.
 
-**ANUXES AFTERTRACE** is a Windows desktop application for static file inspection. It helps examine file properties, calculate hashes, identify supported file formats from their headers, inspect embedded signing-certificate information, and review heuristic findings.
+### Change Detection, AUTO CHECK and reports — M2–M4
 
-Built with **C#**, **WPF**, and **.NET 8**.
+- Compare two snapshots by relative path and SHA-256.
+- Classify `ADDED`, `MODIFIED`, `DELETED`, `MOVED` and `RENAMED` files. A folder and filename change is shown as `MOVED`.
+- Match duplicate hashes once each in stable relative-path order and mark ambiguous matches in the report.
+- Treat snapshots with issues as partial and suppress deletions under paths that were unavailable during the new scan.
+- Run `AUTO CHECK` against the latest snapshot for the selected `RootPath`; the first run creates a baseline, and later runs save a new snapshot plus a comparison report.
+- Show scan progress, processed and skipped counts, cancellation, snapshot history, check history, change filters, counters and selected-change details.
+- Save reports separately in `%LOCALAPPDATA%\\ANUXES\\AFTERTRACE\\Reports` and export the selected report as JSON.
 
-## Current features (v0.1.1)
+## Important limitations
 
-| Feature | Description |
-|---|---|
-| File selection | Select a file through the picker or drag and drop it into the scanner. |
-| SHA-256 | Calculate a SHA-256 hash using streamed file reads. |
-| File identification | Detect supported formats from file headers. |
-| Extension comparison | Compare a file extension with its detected header format where supported. |
-| Signature information | Inspect whether embedded signing-certificate information can be read. This version does not validate the certificate trust chain. |
-| Findings | Display heuristic indicators with explanations. |
-| JSON export | Export the inspection result as JSON. |
+- A warning is not proof of malware. Unsigned files, unknown formats and extension mismatches can be legitimate.
+- A result with no warnings does not mean a file is safe.
+- There is no malware-signature database, cloud reputation lookup, behavioral sandbox or real-time protection.
+- The certificate check only reports whether certificate information can be read. It does not establish publisher identity or signature trust.
+- Symbolic links and junctions are skipped. A file that changes while its hash is being calculated is reported as an issue and is not included as a stable entry.
 
-## Roadmap
+## Build
 
-The next development milestone is **Snapshot System / Change Tracking**:
+Requirements:
 
-- Save snapshots of a user-selected folder or drive.
-- Compare a later scan with a saved snapshot.
-- Identify added, modified, moved, renamed, and deleted files.
-- Keep snapshot history and export comparison reports.
+- Windows 10 or Windows 11
+- .NET 8 SDK
 
-**Change Tracking is planned and is not available in v0.1.1.**
-
-## Requirements
-
-- Windows 10 or Windows 11.
-- .NET 8 SDK.
-- Visual Studio 2022 with the **.NET desktop development** workload (optional, recommended).
-
-## Build and run
-
-Clone the repository:
-
-```powershell
-git clone https://github.com/Kas1mov/ANUXES-AFTERTRACE.git
-cd ANUXES-AFTERTRACE
-```
-
-Restore and build:
+The project file is in the repository root. From this directory, run:
 
 ```powershell
 dotnet restore .\ANUXES-AFTERTRACE.sln
-dotnet build .\ANUXES-AFTERTRACE.sln -c Debug
-```
-
-Run the application:
-
-```powershell
+dotnet build .\ANUXES-AFTERTRACE.sln -c Release
 dotnet run --project .\Aftertrace.App.csproj
 ```
 
-To publish a self-contained Windows x64 build, run:
-
-```powershell
-.\build-release.bat
-```
-
-The output is written to `publish\win-x64\`.
+To publish a self-contained Windows x64 build, run `build-release.bat`.
 
 ## Project structure
 
 ```text
 ANUXES-AFTERTRACE/
-├── Assets/
-│   ├── anuxes-logo.ico
-│   └── anuxes-logo.png
-├── Models/
-│   ├── FileAnalysisResult.cs
-│   └── Finding.cs
-├── Services/
-│   └── FileAnalyzer.cs
+├── Assets/                 # ANUXES application icons
+├── Models/                 # File analysis and snapshot models
+├── Services/               # File analyzer and snapshot engine
 ├── docs/
-│   └── README_RU.md
+│   └── README_RU.md         # Russian documentation
 ├── App.xaml
 ├── App.xaml.cs
 ├── MainWindow.xaml
 ├── MainWindow.xaml.cs
-├── ANUXES-AFTERTRACE.sln
 ├── Aftertrace.App.csproj
+├── ANUXES-AFTERTRACE.sln
 ├── build-release.bat
 └── README.md
 ```
 
-## Notes and limitations
+## Roadmap
 
-- AFTERTRACE is a file-inspection assistant, **not a full antivirus**.
-- A warning is not proof of malware; unsigned files and unknown formats can be legitimate.
-- A result with no warnings does not prove that a file is safe.
-- The embedded-certificate check reports available certificate information; it does not establish certificate-chain trust in this version.
-- Files are inspected as data. AFTERTRACE does not execute, delete, or quarantine inspected files.
-- Snapshot-based Change Tracking is planned for a future release.
-
-## Credits
-
-| Role | Name |
-|---|---|
-| Publisher | **ANUXES DIVISION** |
-| Developer | **Kas1mov** |
-
-## License
-
-No open-source license has been granted for this repository. Unless a license is added, all rights are reserved by the developer. Public visibility does not grant permission to redistribute, modify, or reuse the source code.
+- [x] M1 — Folder and drive snapshots
+- [x] M2 — Before/after comparison and change detection
+- [x] M3 — Automatic check against the latest snapshot
+- [x] M4 — Change history, filters and reports
+- [ ] More file signature formats
+- [ ] Authenticode trust verification
+- [ ] Microsoft Defender integration
 
 ---
 
-<div align="center">
-
-**ANUXES AFTERTRACE** · File Inspection · `v0.1.1`
-
-*Published by ANUXES DIVISION · Developed by Kas1mov*
-
-</div>
+© 2026 ANUXES DIVISION. All rights reserved.

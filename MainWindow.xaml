@@ -43,7 +43,7 @@
                         <Border Margin="10,0,0,0" VerticalAlignment="Center" Background="#1B1424"
                                 BorderBrush="#624187" BorderThickness="1" CornerRadius="5" Padding="6,2">
                             <Border.Effect><DropShadowEffect Color="#A855F7" BlurRadius="9" ShadowDepth="0" Opacity="0.28" /></Border.Effect>
-                            <TextBlock Text="v0.1.1" FontSize="9" FontWeight="SemiBold" Foreground="#C9A7F5" />
+                            <TextBlock Text="v0.2.0" FontSize="9" FontWeight="SemiBold" Foreground="#C9A7F5" />
                         </Border>
                     </StackPanel>
                     <TextBlock Grid.Column="1" Text="FILE INTELLIGENCE CONSOLE" HorizontalAlignment="Center"
@@ -105,8 +105,8 @@
                             <Button Style="{StaticResource SidebarButton}" Click="SelectFile_Click">
                                 <StackPanel Orientation="Horizontal"><TextBlock Text="⌕" FontSize="20" Foreground="#A78BFA" Width="27" /><TextBlock Text="File scanner" VerticalAlignment="Center" /></StackPanel>
                             </Button>
-                            <Button Style="{StaticResource SidebarButton}" IsEnabled="False">
-                                <StackPanel Orientation="Horizontal"><TextBlock Text="◷" FontSize="18" Foreground="#8D80B8" Width="27" /><TextBlock Text="Change tracking" VerticalAlignment="Center" /></StackPanel>
+                            <Button Style="{StaticResource SidebarButton}" Click="SnapshotsNav_Click">
+                                <StackPanel Orientation="Horizontal"><TextBlock Text="◷" FontSize="18" Foreground="#A78BFA" Width="27" /><TextBlock Text="Snapshots" VerticalAlignment="Center" /></StackPanel>
                             </Button>
                             <Button Style="{StaticResource SidebarButton}" IsEnabled="False">
                                 <StackPanel Orientation="Horizontal"><TextBlock Text="▤" FontSize="17" Foreground="#8D80B8" Width="27" /><TextBlock Text="Reports" VerticalAlignment="Center" /></StackPanel>
@@ -138,7 +138,7 @@
                 </Border>
 
                 <!-- Main workspace -->
-                <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,4,4">
+                <ScrollViewer x:Name="MainScrollViewer" Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,4,4">
                     <StackPanel Margin="30,25,30,28">
                         <Grid Margin="0,0,0,19">
                             <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
@@ -277,6 +277,279 @@
                                         </StackPanel>
                                     </Border>
                                 </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Snapshot Engine -->
+                        <Border x:Name="SnapshotCard" Background="#17141D" BorderBrush="#604078" BorderThickness="1"
+                                CornerRadius="13" Padding="20" Margin="0,17,0,0">
+                            <Border.Effect><DropShadowEffect Color="#6D28D9" BlurRadius="22" ShadowDepth="0" Opacity="0.13" /></Border.Effect>
+                            <StackPanel>
+                                <Grid Margin="0,0,0,14">
+                                    <StackPanel>
+                                        <TextBlock Text="03 / SNAPSHOT ENGINE" FontSize="9" FontWeight="Bold" Foreground="#B58AE8" />
+                                        <TextBlock Text="Create a folder snapshot" Margin="0,6,0,0" FontSize="17" FontWeight="SemiBold" Foreground="#F0E8FF" />
+                                        <TextBlock Text="Capture file metadata and SHA-256 hashes. Source files are never modified." Margin="0,5,0,0"
+                                                   FontSize="10" Foreground="#898BAE" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <Border Background="#121017" BorderBrush="#493356" BorderThickness="1" CornerRadius="9" Padding="12">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="SCAN TARGET" FontSize="8" FontWeight="Bold" Foreground="#8580A5" />
+                                            <TextBlock x:Name="SnapshotFolderText" Text="No folder selected" Margin="0,5,12,0"
+                                                       FontSize="10" Foreground="#DCCBFA" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <Button Grid.Column="1" Content="CHOOSE FOLDER" Style="{StaticResource QuietButton}"
+                                                Click="ChooseSnapshotFolder_Click" VerticalAlignment="Center" />
+                                    </Grid>
+                                </Border>
+
+                                <Grid Margin="0,12,0,0">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="8" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="SnapshotStatusText" Text="READY · Choose a folder to create your first snapshot."
+                                               VerticalAlignment="Center" FontSize="9" Foreground="#8587A9" TextWrapping="Wrap" />
+                                    <Button x:Name="CancelSnapshotButton" Grid.Column="1" Content="CANCEL" Style="{StaticResource QuietButton}"
+                                            Click="CancelSnapshot_Click" Visibility="Collapsed" />
+                                    <Button x:Name="CreateSnapshotButton" Grid.Column="3" Content="CREATE SNAPSHOT  →"
+                                            Style="{StaticResource GlowButton}" Click="CreateSnapshot_Click" IsEnabled="False" MinWidth="160" />
+                                </Grid>
+                                <ProgressBar x:Name="SnapshotProgressBar" Height="3" Margin="0,10,0,0" Background="#2A2233"
+                                             Foreground="#A855F7" BorderThickness="0" IsIndeterminate="False" Visibility="Collapsed" />
+                                <TextBlock x:Name="SnapshotProgressDetailsText" Margin="0,6,0,0" FontSize="8" Foreground="#777A9E"
+                                           TextTrimming="CharacterEllipsis" Visibility="Collapsed" />
+
+                                <Grid Margin="0,16,0,0">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="12" /><ColumnDefinition Width="*" /><ColumnDefinition Width="12" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Background="#1D1825" BorderBrush="#382A46" BorderThickness="1" CornerRadius="8" Padding="12">
+                                        <StackPanel><TextBlock Text="FILES CAPTURED" FontSize="8" FontWeight="Bold" Foreground="#8585A9" />
+                                            <TextBlock x:Name="SnapshotFilesText" Text="—" Margin="0,6,0,0" FontSize="19" FontWeight="Bold" Foreground="#EDE4FF" /></StackPanel>
+                                    </Border>
+                                    <Border Grid.Column="2" Background="#1D1825" BorderBrush="#382A46" BorderThickness="1" CornerRadius="8" Padding="12">
+                                        <StackPanel><TextBlock Text="TOTAL SIZE" FontSize="8" FontWeight="Bold" Foreground="#8585A9" />
+                                            <TextBlock x:Name="SnapshotSizeText" Text="—" Margin="0,6,0,0" FontSize="19" FontWeight="Bold" Foreground="#EDE4FF" /></StackPanel>
+                                    </Border>
+                                    <Border Grid.Column="4" Background="#1D1825" BorderBrush="#382A46" BorderThickness="1" CornerRadius="8" Padding="12">
+                                        <StackPanel><TextBlock Text="SKIPPED ITEMS" FontSize="8" FontWeight="Bold" Foreground="#8585A9" />
+                                            <TextBlock x:Name="SnapshotSkippedText" Text="—" Margin="0,6,0,0" FontSize="19" FontWeight="Bold" Foreground="#EDE4FF" /></StackPanel>
+                                    </Border>
+                                </Grid>
+
+                                <Grid Margin="0,19,0,9">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="8" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="SNAPSHOT HISTORY" FontSize="9" FontWeight="Bold" Foreground="#B58AE8" />
+                                        <TextBlock Text="Saved locally on this device" Margin="0,4,0,0" FontSize="9" Foreground="#777A9E" />
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Content="REFRESH" Style="{StaticResource QuietButton}" Click="RefreshSnapshots_Click" Padding="11,7" />
+                                    <Button x:Name="LoadSnapshotButton" Grid.Column="3" Content="LOAD SELECTED" Style="{StaticResource QuietButton}"
+                                            Click="LoadSnapshot_Click" IsEnabled="False" Padding="11,7" />
+                                </Grid>
+                                <ListBox x:Name="SnapshotHistoryList" Height="172" Background="#111015" Foreground="#E8DEFA"
+                                         BorderBrush="#392B47" BorderThickness="1" Padding="5"
+                                         SelectionChanged="SnapshotHistoryList_SelectionChanged"
+                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#1A1621" BorderBrush="#30243A" BorderThickness="1" CornerRadius="7" Padding="10" Margin="0,0,0,5">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding RootPath}" FontSize="9" FontWeight="SemiBold" Foreground="#E4D7F8"
+                                                                   TextTrimming="CharacterEllipsis" />
+                                                        <TextBlock Text="{Binding CreatedAtUtc, StringFormat={}{0:yyyy-MM-dd HH:mm:ss} UTC}"
+                                                                   Margin="0,4,0,0" FontSize="8" Foreground="#8587A9" />
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding FileCount, StringFormat={}{0:N0} files}" FontSize="9" Foreground="#CDB4F5" HorizontalAlignment="Right" />
+                                                        <TextBlock Text="{Binding TotalSizeBytes, StringFormat={}{0:N0} bytes}" Margin="0,3,0,0"
+                                                                   FontSize="8" Foreground="#777A9E" HorizontalAlignment="Right" />
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                                <TextBlock x:Name="SnapshotHistoryEmptyText" Text="No snapshots yet. Create one to start building your local history."
+                                           Margin="2,8,0,0" FontSize="9" Foreground="#777A9E" TextWrapping="Wrap" />
+
+                                <Grid Margin="0,18,0,8">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="SNAPSHOT CONTENT" FontSize="9" FontWeight="Bold" Foreground="#B58AE8" />
+                                        <TextBlock Text="File paths, metadata and hashes from the loaded snapshot" Margin="0,4,0,0"
+                                                   FontSize="9" Foreground="#777A9E" />
+                                    </StackPanel>
+                                </Grid>
+                                <ListBox x:Name="SnapshotFilesList" Height="190" Background="#111015" Foreground="#E8DEFA"
+                                         BorderBrush="#392B47" BorderThickness="1" Padding="5"
+                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#1A1621" BorderBrush="#30243A" BorderThickness="1" CornerRadius="7" Padding="9" Margin="0,0,0,5">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding RelativePath}" FontSize="9" FontWeight="SemiBold" Foreground="#E4D7F8"
+                                                               TextTrimming="CharacterEllipsis" />
+                                                    <Grid Margin="0,5,0,0">
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                                        <TextBlock Text="{Binding LastWriteTimeUtc, StringFormat={}{0:yyyy-MM-dd HH:mm:ss} UTC}"
+                                                                   FontSize="8" Foreground="#8587A9" />
+                                                        <TextBlock Grid.Column="1" Text="{Binding SizeBytes, StringFormat={}{0:N0} bytes}"
+                                                                   FontSize="8" Foreground="#CDB4F5" />
+                                                    </Grid>
+                                                    <TextBlock Text="{Binding Sha256}" Margin="0,4,0,0" FontSize="8" FontFamily="Consolas"
+                                                               Foreground="#8D82A9" TextTrimming="CharacterEllipsis" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                                <TextBlock x:Name="SnapshotFilesEmptyText" Text="Load a snapshot from the history to inspect its file entries."
+                                           Margin="2,8,0,0" FontSize="9" Foreground="#777A9E" TextWrapping="Wrap" />
+
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Change Tracking -->
+                        <Border x:Name="ChangeTrackingCard" Background="#17141D" BorderBrush="#604078" BorderThickness="1"
+                                CornerRadius="13" Padding="20" Margin="0,17,0,0">
+                            <Border.Effect><DropShadowEffect Color="#6D28D9" BlurRadius="22" ShadowDepth="0" Opacity="0.13" /></Border.Effect>
+                            <StackPanel>
+                                <Grid Margin="0,0,0,14">
+                                    <StackPanel>
+                                        <TextBlock Text="04 / CHANGE TRACKING" FontSize="9" FontWeight="Bold" Foreground="#B58AE8" />
+                                        <TextBlock Text="Detect changes between snapshots" Margin="0,6,0,0" FontSize="17" FontWeight="SemiBold" Foreground="#F0E8FF" />
+                                        <TextBlock Text="Compare by relative path and SHA-256. Reports are stored separately from snapshots." Margin="0,5,0,0"
+                                                   FontSize="10" Foreground="#898BAE" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <Border Background="#121017" BorderBrush="#493356" BorderThickness="1" CornerRadius="9" Padding="12">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="CHECK TARGET" FontSize="8" FontWeight="Bold" Foreground="#8580A5" />
+                                            <TextBlock x:Name="ChangeTrackingFolderText" Text="Use the snapshot target above or choose a folder" Margin="0,5,12,0"
+                                                       FontSize="10" Foreground="#DCCBFA" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <Button Grid.Column="1" Content="CHOOSE FOLDER" Style="{StaticResource QuietButton}"
+                                                Click="ChooseTrackingFolder_Click" VerticalAlignment="Center" />
+                                    </Grid>
+                                </Border>
+
+                                <Grid Margin="0,12,0,0">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="8" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="8" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="ChangeTrackingStatusText" Text="READY · Choose a folder to run AUTO CHECK."
+                                               VerticalAlignment="Center" FontSize="9" Foreground="#8587A9" TextWrapping="Wrap" />
+                                    <Button x:Name="CancelChangeTrackingButton" Grid.Column="1" Content="CANCEL" Style="{StaticResource QuietButton}"
+                                            Click="CancelSnapshot_Click" Visibility="Collapsed" />
+                                    <Button x:Name="CreateTrackingSnapshotButton" Grid.Column="3" Content="CREATE SNAPSHOT"
+                                            Style="{StaticResource QuietButton}" Click="CreateSnapshot_Click" IsEnabled="False" />
+                                    <Button x:Name="AutoCheckButton" Grid.Column="5" Content="AUTO CHECK  →"
+                                            Style="{StaticResource GlowButton}" Click="AutoCheck_Click" IsEnabled="False" MinWidth="135" />
+                                </Grid>
+                                <ProgressBar x:Name="ChangeTrackingProgressBar" Height="3" Margin="0,10,0,0" Background="#2A2233"
+                                             Foreground="#A855F7" BorderThickness="0" IsIndeterminate="True" Visibility="Collapsed" />
+                                <TextBlock x:Name="ChangeTrackingProgressDetailsText" Margin="0,6,0,0" FontSize="8" Foreground="#777A9E"
+                                           TextTrimming="CharacterEllipsis" Visibility="Collapsed" />
+
+                                <Grid Margin="0,16,0,0">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="12" /><ColumnDefinition Width="*" /><ColumnDefinition Width="12" /><ColumnDefinition Width="*" /><ColumnDefinition Width="12" /><ColumnDefinition Width="*" /><ColumnDefinition Width="12" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Background="#1D1825" BorderBrush="#382A46" BorderThickness="1" CornerRadius="8" Padding="10"><StackPanel><TextBlock Text="ALL" FontSize="8" FontWeight="Bold" Foreground="#8585A9" /><TextBlock x:Name="ChangeAllCountText" Text="0" Margin="0,6,0,0" FontSize="19" FontWeight="Bold" Foreground="#EDE4FF" /></StackPanel></Border>
+                                    <Border Grid.Column="2" Background="#1D1825" BorderBrush="#382A46" BorderThickness="1" CornerRadius="8" Padding="10"><StackPanel><TextBlock Text="ADDED" FontSize="8" FontWeight="Bold" Foreground="#8585A9" /><TextBlock x:Name="ChangeAddedCountText" Text="0" Margin="0,6,0,0" FontSize="19" FontWeight="Bold" Foreground="#D8B4FE" /></StackPanel></Border>
+                                    <Border Grid.Column="4" Background="#1D1825" BorderBrush="#382A46" BorderThickness="1" CornerRadius="8" Padding="10"><StackPanel><TextBlock Text="MODIFIED" FontSize="8" FontWeight="Bold" Foreground="#8585A9" /><TextBlock x:Name="ChangeModifiedCountText" Text="0" Margin="0,6,0,0" FontSize="19" FontWeight="Bold" Foreground="#D8B4FE" /></StackPanel></Border>
+                                    <Border Grid.Column="6" Background="#1D1825" BorderBrush="#382A46" BorderThickness="1" CornerRadius="8" Padding="10"><StackPanel><TextBlock Text="DELETED" FontSize="8" FontWeight="Bold" Foreground="#8585A9" /><TextBlock x:Name="ChangeDeletedCountText" Text="0" Margin="0,6,0,0" FontSize="19" FontWeight="Bold" Foreground="#D8B4FE" /></StackPanel></Border>
+                                    <Border Grid.Column="8" Background="#1D1825" BorderBrush="#382A46" BorderThickness="1" CornerRadius="8" Padding="10"><StackPanel><TextBlock Text="MOVED / RENAMED" FontSize="8" FontWeight="Bold" Foreground="#8585A9" /><TextBlock x:Name="ChangeMovedRenamedCountText" Text="0" Margin="0,6,0,0" FontSize="19" FontWeight="Bold" Foreground="#D8B4FE" /></StackPanel></Border>
+                                </Grid>
+
+                                <Grid Margin="0,19,0,9">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="8" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="CHECK HISTORY" FontSize="9" FontWeight="Bold" Foreground="#B58AE8" />
+                                        <TextBlock Text="Reports saved in %LOCALAPPDATA%\\ANUXES\\AFTERTRACE\\Reports" Margin="0,4,0,0" FontSize="9" Foreground="#777A9E" TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Content="REFRESH" Style="{StaticResource QuietButton}" Click="RefreshReports_Click" Padding="11,7" />
+                                    <Button x:Name="ExportChangeReportButton" Grid.Column="3" Content="EXPORT JSON" Style="{StaticResource QuietButton}"
+                                            Click="ExportChangeReport_Click" IsEnabled="False" Padding="11,7" />
+                                </Grid>
+                                <ListBox x:Name="ReportHistoryList" Height="145" Background="#111015" Foreground="#E8DEFA"
+                                         BorderBrush="#392B47" BorderThickness="1" Padding="5" SelectionChanged="ReportHistoryList_SelectionChanged"
+                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#1A1621" BorderBrush="#30243A" BorderThickness="1" CornerRadius="7" Padding="9" Margin="0,0,0,5">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding RootPath}" FontSize="9" FontWeight="SemiBold" Foreground="#E4D7F8" TextTrimming="CharacterEllipsis" />
+                                                        <TextBlock Text="{Binding CheckDateUtc, StringFormat={}{0:yyyy-MM-dd HH:mm:ss} UTC}" Margin="0,4,0,0" FontSize="8" Foreground="#8587A9" />
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding ChangeCount, StringFormat={}{0:N0} changes}" FontSize="9" Foreground="#CDB4F5" HorizontalAlignment="Right" />
+                                                        <TextBlock Text="{Binding WarningCount, StringFormat={}{0:N0} warnings}" Margin="0,3,0,0" FontSize="8" Foreground="#777A9E" HorizontalAlignment="Right" />
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                                <TextBlock x:Name="ReportHistoryEmptyText" Text="No check reports yet. Run AUTO CHECK to create one."
+                                           Margin="2,8,0,0" FontSize="9" Foreground="#777A9E" TextWrapping="Wrap" />
+
+                                <Grid Margin="0,18,0,8">
+                                    <StackPanel>
+                                        <TextBlock Text="FOUND CHANGES" FontSize="9" FontWeight="Bold" Foreground="#B58AE8" />
+                                        <TextBlock Text="Select a report item to inspect its changes" Margin="0,4,0,0" FontSize="9" Foreground="#777A9E" />
+                                    </StackPanel>
+                                    <ListBox x:Name="ChangeFilterList" Grid.Column="1" Width="380" Height="31" SelectedIndex="0"
+                                             Style="{StaticResource ChangeTrackingFilterBar}"
+                                             SelectionChanged="ChangeFilter_SelectionChanged">
+                                        <ListBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" />
+                                            </ItemsPanelTemplate>
+                                        </ListBox.ItemsPanel>
+                                        <ListBoxItem Content="ALL" />
+                                        <ListBoxItem Content="ADDED" />
+                                        <ListBoxItem Content="MODIFIED" />
+                                        <ListBoxItem Content="DELETED" />
+                                        <ListBoxItem Content="MOVED" />
+                                        <ListBoxItem Content="RENAMED" />
+                                    </ListBox>
+                                </Grid>
+                                <ListBox x:Name="ChangeList" Height="190" Style="{StaticResource ChangeTrackingListBox}"
+                                         SelectionChanged="ChangeList_SelectionChanged">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#1A1621" BorderBrush="#30243A" BorderThickness="1" CornerRadius="7" Padding="9" Margin="0,0,0,5">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                                    <TextBlock Text="{Binding Type}" FontSize="8" FontWeight="Bold" Foreground="#C084FC" Width="76" />
+                                                    <StackPanel Grid.Column="1">
+                                                        <TextBlock Text="{Binding OldPath, TargetNullValue=—}" FontSize="9" Foreground="#E4D7F8" TextTrimming="CharacterEllipsis" />
+                                                        <TextBlock Text="{Binding NewPath, TargetNullValue=—}" Margin="0,3,0,0" FontSize="9" Foreground="#B7A4D1" TextTrimming="CharacterEllipsis" />
+                                                    </StackPanel>
+                                                    <TextBlock Grid.Column="2" Text="{Binding NewSizeBytes, StringFormat={}{0:N0} B}" FontSize="8" Foreground="#8587A9" VerticalAlignment="Center" />
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                                <TextBlock x:Name="ChangeListEmptyText" Text="No changes to display."
+                                           Margin="2,8,0,0" FontSize="9" Foreground="#777A9E" TextWrapping="Wrap" />
+
+                                <Border Background="#121017" BorderBrush="#493356" BorderThickness="1" CornerRadius="9" Padding="12" Margin="0,14,0,0">
+                                    <StackPanel>
+                                        <TextBlock Text="CHANGE DETAILS" FontSize="8" FontWeight="Bold" Foreground="#8580A5" />
+                                        <TextBlock x:Name="ChangeDetailTypeText" Text="Select a change" Margin="0,7,0,0" FontSize="11" FontWeight="SemiBold" Foreground="#E8DEFA" />
+                                        <TextBlock x:Name="ChangeDetailPathsText" Margin="0,5,0,0" FontSize="9" Foreground="#CDB4F5" TextWrapping="Wrap" />
+                                        <TextBlock x:Name="ChangeDetailHashText" Margin="0,5,0,0" FontSize="8" FontFamily="Consolas" Foreground="#8D82A9" TextWrapping="Wrap" />
+                                        <TextBlock x:Name="ChangeDetailSizeText" Margin="0,5,0,0" FontSize="8" Foreground="#8587A9" />
+                                        <TextBlock x:Name="ChangeDetailNoteText" Margin="0,5,0,0" FontSize="8" Foreground="#B58AE8" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Border>
                             </StackPanel>
                         </Border>
 

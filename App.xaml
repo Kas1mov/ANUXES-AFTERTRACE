@@ -372,6 +372,107 @@
         <!-- Any future ordinary buttons also inherit the dark ANUXES treatment. -->
         <Style TargetType="Button" BasedOn="{StaticResource QuietButton}" />
 
+        <!-- Change Tracking controls: dark ANUXES surfaces with purple neon selection states. -->
+        <Style x:Key="ChangeTrackingListBoxItem" TargetType="ListBoxItem">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="ChangeItemChrome" Background="Transparent" BorderBrush="Transparent"
+                                BorderThickness="1" CornerRadius="8" Padding="1">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ChangeItemChrome" Property="Background" Value="#21172B" />
+                                <Setter TargetName="ChangeItemChrome" Property="BorderBrush" Value="#70458D" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="ChangeItemChrome" Property="Background" Value="#28163D" />
+                                <Setter TargetName="ChangeItemChrome" Property="BorderBrush" Value="#B77BFF" />
+                                <Setter TargetName="ChangeItemChrome" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="#A855F7" BlurRadius="16" ShadowDepth="0" Opacity="0.72" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter TargetName="ChangeItemChrome" Property="BorderBrush" Value="#8B5CF6" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ChangeTrackingListBox" TargetType="ListBox">
+            <Setter Property="Background" Value="#111015" />
+            <Setter Property="Foreground" Value="#E8DEFA" />
+            <Setter Property="BorderBrush" Value="#493356" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="5" />
+            <Setter Property="ItemContainerStyle" Value="{StaticResource ChangeTrackingListBoxItem}" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        </Style>
+
+        <Style x:Key="ChangeTrackingFilterChip" TargetType="ListBoxItem">
+            <Setter Property="Background" Value="#1A1621" />
+            <Setter Property="Foreground" Value="#AFA4C4" />
+            <Setter Property="Padding" Value="9,5" />
+            <Setter Property="Margin" Value="0,0,5,0" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="FilterChipChrome" Background="{TemplateBinding Background}"
+                                BorderBrush="#30243A" BorderThickness="1" CornerRadius="7"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="FilterChipChrome" Property="Background" Value="#21172B" />
+                                <Setter TargetName="FilterChipChrome" Property="BorderBrush" Value="#8B5CF6" />
+                                <Setter TargetName="FilterChipChrome" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="#A855F7" BlurRadius="10" ShadowDepth="0" Opacity="0.42" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Foreground" Value="#F3EEFF" />
+                                <Setter TargetName="FilterChipChrome" Property="Background" Value="#34204F" />
+                                <Setter TargetName="FilterChipChrome" Property="BorderBrush" Value="#B77BFF" />
+                                <Setter TargetName="FilterChipChrome" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="#A855F7" BlurRadius="12" ShadowDepth="0" Opacity="0.62" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ChangeTrackingFilterBar" TargetType="ListBox">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Foreground" Value="#AFA4C4" />
+            <Setter Property="ItemContainerStyle" Value="{StaticResource ChangeTrackingFilterChip}" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+        </Style>
+
 
 
     </Application.Resources>
